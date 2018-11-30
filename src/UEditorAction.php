@@ -74,7 +74,13 @@ class UEditorAction extends Action
                 // 处理返回的URL 不是完整的url补全
                 if (substr($result['url'], 0, 4) != 'http' && substr($result['url'], 0, 1) != '/') {
                     $result['url'] = '/' . $result['url'];
-                    $result['url'] = Yii::getAlias('@web'.$result['url']);
+                    $result['url'] = Yii::$app->request->hostInfo.Yii::getAlias('@web'.$result['url']);
+                } else {
+                    if (isset($this->config['imageUrlPrefix']) && !empty($this->config['imageUrlPrefix'])) {
+                        // 替换 ossDomain
+                        $urlInfo = parse_url($result['url']);
+                        $result['url'] = $this->config['imageUrlPrefix'].$urlInfo['path'];
+                    }
                 }
                 break;
             /* 列出图片 */
