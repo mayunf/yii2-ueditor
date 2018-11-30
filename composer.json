@@ -1,0 +1,23 @@
+{
+  "name": "mayunfeng/yii2-ueditor",
+  "type": "yii2-extension",
+  "description": "The ueditor integration for the Yii2 framework",
+  "keywords": ["yii2", "yii2-ueditor",  "ueditor", "helper", "mayunfeng"],
+  "license": "MIT",
+  "minimum-stability": "stable",
+  "authors": [
+    {
+      "name": "马运锋",
+      "email": "mayunfeng@jwsem.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0.0",
+    "yiisoft/yii2": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "yii\\ueditor\\": "src/"
+    }
+  }
+}
