@@ -152,20 +152,32 @@ class Uploader
             return;
         }
 
-        //创建目录失败
-        if (!file_exists($dirname) && !mkdir($dirname, 0777, true)) {
-            $this->stateInfo = $this->getStateInfo("ERROR_CREATE_DIR");
-            return;
-        } else if (!is_writeable($dirname)) {
-            $this->stateInfo = $this->getStateInfo("ERROR_DIR_NOT_WRITEABLE");
-            return;
-        }
+        if (isset($this->config['disk']) && $this->config['disk'] == 'oss') {
+            /** @var \yii\aliyunoss\OSS $oss */
+            $oss = \Yii::$app->get('oss');
+            $newUrl = $oss->client()->putObject($oss->bucket,ltrim($this->fullName,'./'),$img);
+            if ($newUrl != null) {
+                $this->stateInfo = $this->stateMap[0];
+            } else {
+                $this->stateInfo = $this->getStateInfo("ERROR_FILE_MOVE");
+            }
 
-        //移动文件
-        if (!(file_put_contents($this->filePath, $img) && file_exists($this->filePath))) { //移动失败
-            $this->stateInfo = $this->getStateInfo("ERROR_WRITE_CONTENT");
-        } else { //移动成功
-            $this->stateInfo = $this->stateMap[0];
+        } else {
+            //创建目录失败
+            if (!file_exists($dirname) && !mkdir($dirname, 0777, true)) {
+                $this->stateInfo = $this->getStateInfo("ERROR_CREATE_DIR");
+                return;
+            } else if (!is_writeable($dirname)) {
+                $this->stateInfo = $this->getStateInfo("ERROR_DIR_NOT_WRITEABLE");
+                return;
+            }
+
+            //移动文件
+            if (!(file_put_contents($this->filePath, $img) && file_exists($this->filePath))) { //移动失败
+                $this->stateInfo = $this->getStateInfo("ERROR_WRITE_CONTENT");
+            } else { //移动成功
+                $this->stateInfo = $this->stateMap[0];
+            }
         }
 
     }
@@ -223,21 +235,35 @@ class Uploader
             return;
         }
 
-        //创建目录失败
-        if (!file_exists($dirname) && !mkdir($dirname, 0777, true)) {
-            $this->stateInfo = $this->getStateInfo("ERROR_CREATE_DIR");
-            return;
-        } else if (!is_writeable($dirname)) {
-            $this->stateInfo = $this->getStateInfo("ERROR_DIR_NOT_WRITEABLE");
-            return;
+        if (isset($this->config['disk']) && $this->config['disk'] == 'oss') {
+            /** @var \yii\aliyunoss\OSS $oss */
+            $oss = \Yii::$app->get('oss');
+            $newUrl = $oss->client()->putObject($oss->bucket,ltrim($this->fullName,'./'),$img);
+            if ($newUrl != null) {
+                $this->stateInfo = $this->stateMap[0];
+            } else {
+                $this->stateInfo = $this->getStateInfo("ERROR_FILE_MOVE");
+            }
+
+        } else {
+            //创建目录失败
+            if (!file_exists($dirname) && !mkdir($dirname, 0777, true)) {
+                $this->stateInfo = $this->getStateInfo("ERROR_CREATE_DIR");
+                return;
+            } else if (!is_writeable($dirname)) {
+                $this->stateInfo = $this->getStateInfo("ERROR_DIR_NOT_WRITEABLE");
+                return;
+            }
+
+            //移动文件
+            if (!(file_put_contents($this->filePath, $img) && file_exists($this->filePath))) { //移动失败
+                $this->stateInfo = $this->getStateInfo("ERROR_WRITE_CONTENT");
+            } else { //移动成功
+                $this->stateInfo = $this->stateMap[0];
+            }
         }
 
-        //移动文件
-        if (!(file_put_contents($this->filePath, $img) && file_exists($this->filePath))) { //移动失败
-            $this->stateInfo = $this->getStateInfo("ERROR_WRITE_CONTENT");
-        } else { //移动成功
-            $this->stateInfo = $this->stateMap[0];
-        }
+
 
     }
 

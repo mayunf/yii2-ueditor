@@ -18,9 +18,7 @@ class UEditorAction extends Action
     /**
      * @var array
      */
-    public $config = [
-        'disk' => 'oss'
-    ];
+    public $config;
 
 
     public function init()
@@ -250,7 +248,7 @@ class UEditorAction extends Action
             $source = $_GET[$fieldName];
         }
         foreach ($source as $imgUrl) {
-            $item = new Uploader($imgUrl, $config, "remote");
+            $item = new Uploader($imgUrl, ArrayHelper::merge($config,['disk' => ArrayHelper::getValue($config,'disk','local')]), "remote");
             $info = $item->getFileInfo();
             array_push($list, [
                 "state" => $info["state"],
