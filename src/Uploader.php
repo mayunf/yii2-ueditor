@@ -102,13 +102,11 @@ class Uploader
 
         if (isset($this->config['disk']) && $this->config['disk'] == 'oss') {
             /** @var \yii\aliyunoss\OSS $oss */
-            $oss = \Yii::$app->get('oss');
-            $newUrl = $oss->uploadFile(ltrim($this->fullName,'./'),$file["tmp_name"]);
-            if ($newUrl != null) {
-                $this->fullName = $newUrl;
-                $this->stateInfo = $this->stateMap[0];
-            } else {
+            $oss = \Yii::$app->oss;
+            if (!$oss->client()->uploadFile($oss->bucket,ltrim($this->fullName,'./'),$file["tmp_name"])) {
                 $this->stateInfo = $this->getStateInfo("ERROR_FILE_MOVE");
+            } else {
+                $this->stateInfo = $this->stateMap[0];
             }
 
         } else {
